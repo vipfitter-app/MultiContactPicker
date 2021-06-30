@@ -15,6 +15,8 @@ public class ContactResult implements Parcelable {
 
     private String mContactID;
     private String mDisplayName;
+    private String mFirstName;
+    private String mLastName;
     private boolean mStarred;
     private Uri mPhoto;
     private Uri mThumbnail;
@@ -31,6 +33,14 @@ public class ContactResult implements Parcelable {
 
     public String getDisplayName() {
         return mDisplayName;
+    }
+
+    public String getFirstName() {
+        return mFirstName;
+    }
+
+    public String getLastName() {
+        return mLastName;
     }
 
     public boolean isStarred() {
@@ -56,6 +66,8 @@ public class ContactResult implements Parcelable {
     public ContactResult(Contact contact){
         this.mContactID = String.valueOf(contact.getId());
         this.mDisplayName = contact.getDisplayName();
+        this.mFirstName = contact.getFirstName();
+        this.mLastName = contact.getLastName();
         this.mStarred = contact.isStarred();
         this.mPhoto = contact.getPhoto();
         this.mThumbnail = contact.getThumbnail();
@@ -66,6 +78,8 @@ public class ContactResult implements Parcelable {
     protected ContactResult(Parcel in) {
         this.mContactID = in.readString();
         this.mDisplayName = in.readString();
+        this.mFirstName = in.readString();
+        this.mLastName = in.readString();
         this.mStarred = in.readByte() != 0;
         this.mPhoto = in.readParcelable(Uri.class.getClassLoader());
         this.mThumbnail = in.readParcelable(Uri.class.getClassLoader());
@@ -82,6 +96,8 @@ public class ContactResult implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.mContactID);
         dest.writeString(this.mDisplayName);
+        dest.writeString(this.mFirstName);
+        dest.writeString(this.mLastName);
         dest.writeByte(this.mStarred ? (byte) 1 : (byte) 0);
         dest.writeParcelable(this.mPhoto, flags);
         dest.writeParcelable(this.mThumbnail, flags);

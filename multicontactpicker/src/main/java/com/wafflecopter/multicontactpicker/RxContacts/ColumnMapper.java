@@ -37,6 +37,18 @@ class ColumnMapper {
         }
     }
 
+    static void mapGivenName(Contact contact, String givenName) {
+        if (givenName != null && !givenName.isEmpty()) {
+            contact.setFirstName(givenName);
+        }
+    }
+
+    static void mapFamilyName(Contact contact, String familyName) {
+        if (familyName != null && !familyName.isEmpty()) {
+            contact.setLastName(familyName);
+        }
+    }
+
     static void mapEmail (Cursor cursor, Contact contact, int columnIndex) {
         String email = cursor.getString(columnIndex);
         if (email != null && !email.trim().isEmpty()) {

@@ -22,8 +22,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
 import android.util.LongSparseArray;
+
+import androidx.annotation.NonNull;
 
 import com.wafflecopter.multicontactpicker.LimitColumn;
 
@@ -37,8 +38,12 @@ public class RxContacts {
     private static final String DISPLAY_NAME = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
             ContactsContract.Contacts.DISPLAY_NAME_PRIMARY : ContactsContract.Contacts.DISPLAY_NAME;
 
+    private static final String GIVEN_NAME = ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME;
+    private static final String FAMILY_NAME = ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME;
+
     private static final Uri PHONE_CONTENT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
     private static final Uri EMAIL_CONTENT_URI = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
+    private static final Uri NAME_CONTENT_URI = ContactsContract.Data.CONTENT_URI;
 
     private static final String[] PROJECTION = {
             ContactsContract.Contacts._ID,
@@ -55,6 +60,12 @@ public class RxContacts {
             ContactsContract.CommonDataKinds.Email.DATA
     };
 
+    private static final String[] STRUCTURED_NAME_PROJECTION = {
+            ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID,
+            ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
+            ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME
+    };
+
     private static final String[] NUMBER_PROJECTION = {
             ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
             ContactsContract.CommonDataKinds.Phone.NUMBER,
@@ -63,12 +74,10 @@ public class RxContacts {
     };
 
 
-
-
     private ContentResolver mResolver;
     private Context mContext;
 
-    public static Observable<Contact> fetch (@NonNull final LimitColumn columnLimitChoice, @NonNull final Context context) {
+    public static Observable<Contact> fetch(@NonNull final LimitColumn columnLimitChoice, @NonNull final Context context) {
         return Observable.create(new ObservableOnSubscribe<Contact>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<Contact> e) throws Exception {
@@ -82,7 +91,7 @@ public class RxContacts {
         mResolver = context.getContentResolver();
     }
 
-    private void fetch (LimitColumn columnLimitChoice, ObservableEmitter emitter) {
+    private void fetch(LimitColumn columnLimitChoice, ObservableEmitter emitter) {
         LongSparseArray<Contact> contacts = new LongSparseArray<>();
         Cursor cursor = createCursor(getFilter(columnLimitChoice));
         cursor.moveToFirst();
@@ -107,7 +116,9 @@ public class RxContacts {
             ColumnMapper.mapPhoto(cursor, contact, photoColumnIndex);
             ColumnMapper.mapThumbnail(cursor, contact, thumbnailColumnIndex);
 
-            switch (columnLimitChoice){
+            getName(id, contact);
+
+            switch (columnLimitChoice) {
                 case EMAIL:
                     getEmail(id, contact);
                     break;
@@ -120,13 +131,13 @@ public class RxContacts {
                     break;
             }
 
-            if(columnLimitChoice == LimitColumn.EMAIL){
-                if(contact.getEmails().size() > 0){
+            if (columnLimitChoice == LimitColumn.EMAIL) {
+                if (contact.getEmails().size() > 0) {
                     contacts.put(id, contact);
                     //noinspection unchecked
                     emitter.onNext(contact);
                 }
-            }else{
+            } else {
                 contacts.put(id, contact);
                 //noinspection unchecked
                 emitter.onNext(contact);
@@ -137,20 +148,53 @@ public class RxContacts {
         emitter.onComplete();
     }
 
-    private void getEmail(long id, Contact contact){
+    private void getEmail(long id, Contact contact) {
         Cursor emailCursor = mResolver.query(EMAIL_CONTENT_URI, EMAIL_PROJECTION,
                 ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{String.valueOf(id)}, null);
 
-        if(emailCursor != null) {
+        if (emailCursor != null) {
             int emailDataColumnIndex = emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
-            if(emailCursor.moveToFirst()){
+            if (emailCursor.moveToFirst()) {
                 ColumnMapper.mapEmail(emailCursor, contact, emailDataColumnIndex);
             }
             emailCursor.close();
         }
     }
 
-    private void getPhoneNumber(long id, Cursor cursor, Contact contact, int hasPhoneNumberColumnIndex){
+    private void getName(long id, Contact contact) {
+
+        String[] whereNameParams = new String[] {String.valueOf(id), ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE };
+        Cursor nameCursor = mResolver.query(NAME_CONTENT_URI, STRUCTURED_NAME_PROJECTION,
+                ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?", whereNameParams, null);
+
+        if (nameCursor != null) {
+
+            if (nameCursor.moveToFirst()) {
+                int givenNameColumn = nameCursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+                if (givenNameColumn != -1) {
+                    String givenName = nameCursor.getString(givenNameColumn);
+                    ColumnMapper.mapGivenName(contact, givenName);
+                }
+
+                int familyNameColumn = nameCursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+                if (familyNameColumn != -1) {
+                    String familyName = nameCursor.getString(familyNameColumn);
+                    ColumnMapper.mapFamilyName(contact, familyName);
+                }
+            }
+
+//            if (nameCursor.moveToFirst()) {
+//                String givenName = nameCursor.getString(nameCursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
+//                ColumnMapper.mapGivenName(contact, givenName);
+//                String familyName = nameCursor.getString(nameCursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+//                ColumnMapper.mapFamilyName(contact, familyName);
+//            }
+
+            nameCursor.close();
+        }
+    }
+
+    private void getPhoneNumber(long id, Cursor cursor, Contact contact, int hasPhoneNumberColumnIndex) {
         int hasPhoneNumber = Integer.parseInt(cursor.getString(hasPhoneNumberColumnIndex));
         if (hasPhoneNumber > 0) {
             Cursor phoneCursor = mResolver.query(PHONE_CONTENT_URI, NUMBER_PROJECTION,
@@ -169,15 +213,15 @@ public class RxContacts {
         }
     }
 
-    private String getFilter(LimitColumn limitColumn){
-        switch (limitColumn){
+    private String getFilter(LimitColumn limitColumn) {
+        switch (limitColumn) {
             case PHONE:
                 return ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0";
         }
         return null;
     }
 
-    private Cursor createCursor (String filter) {
+    private Cursor createCursor(String filter) {
         return mResolver.query(
                 ContactsContract.Contacts.CONTENT_URI,
                 PROJECTION,

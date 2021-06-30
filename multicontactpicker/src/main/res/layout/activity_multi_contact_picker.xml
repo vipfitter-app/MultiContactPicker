@@ -1,32 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:mcpapp="http://schemas.android.com/apk/com.l4digital.fastscroll"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:mcpapp="http://schemas.android.com/apk/com.l4digital.fastscroll"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/toolbar_container"
+    <RelativeLayout
         android:layout_width="match_parent"
-
         android:layout_height="wrap_content"
         android:visibility="visible">
 
-        <android.support.v7.widget.Toolbar
+        <TextView
+            android:id="@+id/skip"
+            android:layout_width="wrap_content"
+            android:layout_height="?android:attr/actionBarSize"
+            android:layout_centerVertical="true"
+            android:background="?colorPrimary"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:gravity="center"
+            android:text="@string/skip"
+            android:textSize="16sp"
+            android:textColor="@android:color/black" />
+
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
+            android:layout_toRightOf="@+id/skip"
             android:background="?colorPrimary"
+            app:popupTheme="?mcpListPopupWindowStyleTheme"
             app:theme="?mcpToolbarTheme"
-            app:popupTheme="?mcpListPopupWindowStyleTheme"/>
+            tools:ignore="RtlHardcoded" />
 
         <com.miguelcatalan.materialsearchview.MaterialSearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </FrameLayout>
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
 
 
     <RelativeLayout
@@ -51,7 +64,7 @@
                 mcpapp:hideScrollbar="false"
                 mcpapp:showTrack="false"
                 tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="8dp"/>
+                tools:layout_editor_absoluteY="8dp" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -60,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_vertical|center_horizontal"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/tvNoContacts"
@@ -82,11 +95,10 @@
             android:visibility="visible">
 
             <View
-                android:id="@+id/borderView"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="false"
-                android:background="@color/border_color"/>
+                android:background="@color/border_color" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -105,14 +117,14 @@
                     android:enabled="false"
                     android:focusable="true"
                     android:gravity="left|center_vertical"
-                    android:paddingBottom="15dp"
                     android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
                     android:paddingTop="15dp"
+                    android:paddingRight="20dp"
+                    android:paddingBottom="15dp"
                     android:text="@string/tv_select_all_btn_text"
                     android:textColor="@color/selector_contact_select_text"
                     android:textSize="16sp"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/tvSelect"
@@ -125,13 +137,13 @@
                     android:enabled="false"
                     android:focusable="true"
                     android:gravity="center"
-                    android:paddingBottom="15dp"
                     android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
                     android:paddingTop="15dp"
+                    android:paddingRight="20dp"
+                    android:paddingBottom="15dp"
                     android:text="@string/tv_select_btn_text_disabled"
                     android:textColor="@color/selector_contact_select_text"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
             </RelativeLayout>
 
         </LinearLayout>

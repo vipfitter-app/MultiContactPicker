@@ -2,11 +2,11 @@ package com.wafflecopter.multicontactpicker;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.AnimRes;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.StyleRes;
-import android.support.v4.app.Fragment;
+import androidx.annotation.AnimRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
+import androidx.fragment.app.Fragment;
 
 import com.wafflecopter.multicontactpicker.RxContacts.Contact;
 
@@ -36,6 +36,7 @@ public class MultiContactPicker {
         protected LimitColumn columnLimit = LimitColumn.NONE;
         protected Integer searchIconColor;
         protected boolean hideScrollbar;
+        protected boolean hideSelectAllButton;
         protected boolean showTrack = true;
         protected int selectionMode = CHOICE_MODE_MULTIPLE;
         protected int loadingMode = LOAD_ASYNC;
@@ -82,6 +83,11 @@ public class MultiContactPicker {
 
         public Builder hideScrollbar(boolean hideScrollbar) {
             this.hideScrollbar = hideScrollbar;
+            return this;
+        }
+
+        public Builder hideSelectAllButton(boolean hideSelectAllButton) {
+            this.hideSelectAllButton = hideSelectAllButton;
             return this;
         }
 

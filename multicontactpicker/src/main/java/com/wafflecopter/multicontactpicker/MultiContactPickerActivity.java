@@ -3,16 +3,17 @@ package com.wafflecopter.multicontactpicker;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.l4digital.fastscroll.FastScrollRecyclerView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -78,7 +79,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
         initialiseUI(builder);
 
         if(getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -115,6 +116,23 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
                     tvSelectAll.setText(getString(R.string.tv_unselect_all_btn_text));
                 else
                     tvSelectAll.setText(getString(R.string.tv_select_all_btn_text));
+            }
+        });
+
+        TextView tvSkip = findViewById(R.id.skip);
+        tvSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent result = new Intent();
+                result.putExtra(EXTRA_RESULT_SELECTION, MultiContactPicker.buildResult(new ArrayList<Contact>()));
+                setResult(RESULT_OK, result);
+                finish();
+                overrideAnimation();
+
+//                setResult(RESULT_CANCELED);
+//                finish();
+//                overrideAnimation();
             }
         });
 
@@ -165,6 +183,8 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
         }else{
             controlPanel.setVisibility(View.VISIBLE);
         }
+
+        tvSelectAll.setVisibility(builder.hideSelectAllButton ? View.INVISIBLE : View.VISIBLE);
 
         if(builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE && builder.selectedItems.size() > 0){
             throw new RuntimeException("You must be using MultiContactPicker.CHOICE_MODE_MULTIPLE in order to use setSelectedContacts()");

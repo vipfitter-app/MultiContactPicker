@@ -12,6 +12,8 @@ public class Contact implements Comparable<Contact> {
     private final long mId;
     private int mInVisibleGroup;
     private String mDisplayName;
+    private String mFirstName;
+    private String mLastName;
     private boolean mStarred;
     private Uri mPhoto;
     private Uri mThumbnail;
@@ -99,6 +101,22 @@ public class Contact implements Comparable<Contact> {
 
     public void setBackgroundColor(int backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    public String getFirstName() {
+        return mFirstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.mFirstName = firstName;
+    }
+
+    public String getLastName() {
+        return mLastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.mLastName = lastName;
     }
 
     @Override
