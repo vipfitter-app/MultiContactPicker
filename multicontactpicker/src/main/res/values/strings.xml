@@ -7,4 +7,7 @@
     <string name="tv_unselect_all_btn_text">Un-select All</string>
     <string name="tv_no_contacts">No contacts found</string>
     <string name="skip">Skip</string>
+    <string name="type_to_search">Type to search</string>
+    <string name="import_from_contacts">Import from Contacts</string>
+    <string name="done">Done</string>
 </resources>

@@ -143,7 +143,8 @@ public class MultiContactPicker {
 
         public void showPickerForResult(int requestCode) {
             if (acc != null) {
-                Intent intent = new Intent(acc, MultiContactPickerActivity.class);
+                //Intent intent = new Intent(acc, MultiContactPickerActivity.class);
+                Intent intent = new Intent(acc, VipFitterMultiContactPickerActivity.class);
                 intent.putExtra("builder", this);
                 acc.startActivityForResult(intent, requestCode);
                 if(animationOpenEnter != null && animationOpenExit != null){
@@ -151,7 +152,8 @@ public class MultiContactPicker {
                 }
             }else if(frag != null){
                 if(frag.getActivity() != null) {
-                    Intent intent = new Intent(frag.getActivity(), MultiContactPickerActivity.class);
+                    //Intent intent = new Intent(frag.getActivity(), MultiContactPickerActivity.class);
+                    Intent intent = new Intent(frag.getActivity(), VipFitterMultiContactPickerActivity.class);
                     intent.putExtra("builder", this);
                     frag.startActivityForResult(intent, requestCode);
                     if(animationOpenEnter != null && animationOpenExit != null){
@@ -175,6 +177,6 @@ public class MultiContactPicker {
 
     @SuppressWarnings("unchecked")
     public static ArrayList<ContactResult> obtainResult(Intent data){
-        return data.getParcelableArrayListExtra(MultiContactPickerActivity.EXTRA_RESULT_SELECTION);
+        return data.getParcelableArrayListExtra(VipFitterMultiContactPickerActivity.EXTRA_RESULT_SELECTION);
     }
 }

@@ -6,4 +6,15 @@
     <color name="azureColorPrimary">#009BFA</color>
     <color name="selector_contact_select_text_enabled">#2586DD</color>
     <color name="selector_contact_select_text_default">#B2D6F4</color>
+
+    <color name="background_serving_spinners">#FAFAFA</color>
+    <color name="new_background_color">#fbfbfb</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#ffffff</color>
+    <color name="border_line_color_two">#eeeeee</color>
+    <color name="black">#000000</color>
+    <color name="text_color">#339999</color>
+    <color name="text_color_alpha">#40519798</color>
+    <color name="title">#666666</color>
+
 </resources>

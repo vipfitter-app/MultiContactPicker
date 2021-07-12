@@ -108,7 +108,7 @@ public class RxContacts {
             long id = cursor.getLong(idColumnIndex);
             Contact contact = contacts.get(id, null);
             if (contact == null) {
-                contact = new Contact(id);
+                contact = new Contact(id, 1);
             }
             ColumnMapper.mapInVisibleGroup(cursor, contact, inVisibleGroupColumnIndex);
             ColumnMapper.mapDisplayName(cursor, contact, displayNamePrimaryColumnIndex);

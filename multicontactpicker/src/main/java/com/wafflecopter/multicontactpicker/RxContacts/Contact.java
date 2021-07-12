@@ -22,9 +22,13 @@ public class Contact implements Comparable<Contact> {
     private boolean isSelected;
     private int backgroundColor = Color.BLUE;
 
-    Contact(long id) {
+    private final int mType;
+    private String nameEn;
+
+    public Contact(long id, int type) {
         this.mId = id;
         this.backgroundColor = ColorUtils.getRandomMaterialColor();
+        this.mType = type;
     }
 
     public long getId() {
@@ -117,6 +121,18 @@ public class Contact implements Comparable<Contact> {
 
     public void setLastName(String lastName) {
         this.mLastName = lastName;
+    }
+
+    public int getType() {
+        return mType;
+    }
+
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
+    }
+
+    public String getNameEn() {
+        return nameEn;
     }
 
     @Override

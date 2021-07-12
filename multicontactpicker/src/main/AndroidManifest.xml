@@ -11,6 +11,9 @@
         <activity android:name=".MultiContactPickerActivity"
                   android:label="@string/picker_title">
         </activity>
+
+        <activity android:name=".VipFitterMultiContactPickerActivity" />
+
     </application>
 
 </manifest>
