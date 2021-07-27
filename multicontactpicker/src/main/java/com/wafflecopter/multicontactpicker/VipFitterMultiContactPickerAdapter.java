@@ -34,6 +34,7 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
     private VipFitterMultiContactPickerAdapter.ContactSelectListener listener;
     private String currentFilterQuery;
     private Context context;
+    private boolean choiceModeSingle;
 
     interface ContactSelectListener {
         void onContactSelected(Contact contact, int totalSelectedContacts);
@@ -53,6 +54,10 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
         this.contactItemListOriginal = contactItemList;
         this.listener = listener;
         this.context = context;
+    }
+
+    public void setChoiceModeSingle(boolean choiceModeSingle) {
+        this.choiceModeSingle = choiceModeSingle;
     }
 
     @Override
@@ -126,10 +131,18 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
 
                     highlightTerm(contactViewHolder.tvContactName, currentFilterQuery, contactViewHolder.tvContactName.getText().toString());
 
-                    if (contactItem.isSelected()) {
-                        contactViewHolder.ivSelectedState.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.check_on));
+                    if (choiceModeSingle) {
+                        contactViewHolder.ivSelectedState.setVisibility(View.GONE);
+                        contactViewHolder.ivArrow.setVisibility(View.VISIBLE);
                     } else {
-                        contactViewHolder.ivSelectedState.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.check_off));
+                        contactViewHolder.ivSelectedState.setVisibility(View.VISIBLE);
+                        contactViewHolder.ivArrow.setVisibility(View.GONE);
+
+                        if (contactItem.isSelected()) {
+                            contactViewHolder.ivSelectedState.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.check_on));
+                        } else {
+                            contactViewHolder.ivSelectedState.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.check_off));
+                        }
                     }
 
                     contactViewHolder.mView.setOnClickListener(new View.OnClickListener() {
@@ -232,7 +245,7 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
         private final View mView;
         private TextView tvContactName;
         private TextView tvNumber;
-        private ImageView ivSelectedState;
+        private ImageView ivSelectedState, ivArrow;
 
         ContactViewHolder(View view) {
             super(view);
@@ -240,6 +253,7 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
             this.tvContactName = view.findViewById(R.id.tvContactName);
             this.tvNumber = view.findViewById(R.id.tvNumber);
             this.ivSelectedState = view.findViewById(R.id.ivSelectedState);
+            this.ivArrow = view.findViewById(R.id.ivArrow);
         }
     }
 

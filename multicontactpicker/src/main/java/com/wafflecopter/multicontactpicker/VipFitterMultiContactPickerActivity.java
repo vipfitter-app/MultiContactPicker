@@ -336,6 +336,7 @@ public class VipFitterMultiContactPickerActivity extends AppCompatActivity imple
                 }
             }
         });
+        adapter.setChoiceModeSingle(builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
