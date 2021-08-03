@@ -2,6 +2,7 @@ package com.wafflecopter.multicontactpicker;
 
 import android.app.Activity;
 import android.content.Intent;
+
 import androidx.annotation.AnimRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -96,44 +97,44 @@ public class MultiContactPicker {
             return this;
         }
 
-        public Builder setChoiceMode(int selectionMode){
+        public Builder setChoiceMode(int selectionMode) {
             this.selectionMode = selectionMode;
             return this;
         }
 
-        public Builder setLoadingType(int loadingMode){
+        public Builder setLoadingType(int loadingMode) {
             this.loadingMode = loadingMode;
             return this;
         }
 
-        public Builder setTitleText(String titleText){
+        public Builder setTitleText(String titleText) {
             this.titleText = titleText;
             return this;
         }
 
-        public Builder limitToColumn(LimitColumn limitedColumn){
+        public Builder limitToColumn(LimitColumn limitedColumn) {
             this.columnLimit = limitedColumn;
             return this;
         }
 
-        public Builder setSelectedContacts(String... selectedContactIDs){
+        public Builder setSelectedContacts(String... selectedContactIDs) {
             this.selectedItems.clear();
-            for(String id : selectedContactIDs){
+            for (String id : selectedContactIDs) {
                 this.selectedItems.add(Long.parseLong(id));
             }
             return this;
         }
 
-        public Builder setSelectedContacts(ArrayList<ContactResult> selectedContacts){
+        public Builder setSelectedContacts(ArrayList<ContactResult> selectedContacts) {
             this.selectedItems.clear();
-            for(ContactResult result : selectedContacts){
+            for (ContactResult result : selectedContacts) {
                 this.selectedItems.add(Long.parseLong(result.getContactID()));
             }
             return this;
         }
 
         public Builder setActivityAnimations(@AnimRes Integer animationOpenEnter, @AnimRes Integer animationOpenExit, @AnimRes Integer animationCloseEnter, @AnimRes Integer
-                animationCloseExit){
+                animationCloseExit) {
             this.animationOpenEnter = animationOpenEnter;
             this.animationOpenExit = animationOpenExit;
             this.animationCloseEnter = animationCloseEnter;
@@ -147,36 +148,36 @@ public class MultiContactPicker {
                 Intent intent = new Intent(acc, VipFitterMultiContactPickerActivity.class);
                 intent.putExtra("builder", this);
                 acc.startActivityForResult(intent, requestCode);
-                if(animationOpenEnter != null && animationOpenExit != null){
+                if (animationOpenEnter != null && animationOpenExit != null) {
                     acc.overridePendingTransition(animationOpenEnter, animationOpenExit);
                 }
-            }else if(frag != null){
-                if(frag.getActivity() != null) {
+            } else if (frag != null) {
+                if (frag.getActivity() != null) {
                     //Intent intent = new Intent(frag.getActivity(), MultiContactPickerActivity.class);
                     Intent intent = new Intent(frag.getActivity(), VipFitterMultiContactPickerActivity.class);
                     intent.putExtra("builder", this);
                     frag.startActivityForResult(intent, requestCode);
-                    if(animationOpenEnter != null && animationOpenExit != null){
+                    if (animationOpenEnter != null && animationOpenExit != null) {
                         frag.getActivity().overridePendingTransition(animationOpenEnter, animationOpenExit);
                     }
                 }
-            }else{
+            } else {
                 throw new RuntimeException("Unable to find a context for intent. Is there a valid activity or fragment passed in the builder?");
             }
 
         }
     }
 
-    static ArrayList<ContactResult> buildResult(List<Contact> selectedContacts){
+    static ArrayList<ContactResult> buildResult(List<Contact> selectedContacts) {
         ArrayList<ContactResult> contactResults = new ArrayList<>();
-        for(Contact contact : selectedContacts){
+        for (Contact contact : selectedContacts) {
             contactResults.add(new ContactResult(contact));
         }
         return contactResults;
     }
 
     @SuppressWarnings("unchecked")
-    public static ArrayList<ContactResult> obtainResult(Intent data){
+    public static ArrayList<ContactResult> obtainResult(Intent data) {
         return data.getParcelableArrayListExtra(VipFitterMultiContactPickerActivity.EXTRA_RESULT_SELECTION);
     }
 }
