@@ -14,6 +14,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.l4digital.fastscroll.FastScroller;
@@ -40,6 +41,7 @@ class MultiContactPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.listener = listener;
     }
 
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_contact_pick_item, viewGroup, false);
@@ -47,7 +49,7 @@ class MultiContactPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int i) {
         if (holder instanceof ContactViewHolder) {
             ContactViewHolder contactViewHolder = (ContactViewHolder) holder;
             final Contact contactItem = getItem(i);
@@ -87,15 +89,12 @@ class MultiContactPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 contactViewHolder.ivSelectedState.setVisibility(View.INVISIBLE);
             }
 
-            contactViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    setContactSelected(contactItem.getId());
-                    if (listener != null) {
-                        listener.onContactSelected(getItem(i), getSelectedContactsCount());
-                    }
-                    notifyDataSetChanged();
+            contactViewHolder.mView.setOnClickListener(view -> {
+                setContactSelected(contactItem.getId());
+                if (listener != null) {
+                    listener.onContactSelected(getItem(i), getSelectedContactsCount());
                 }
+                notifyDataSetChanged();
             });
 
 
@@ -190,10 +189,10 @@ class MultiContactPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ContactViewHolder(View view) {
             super(view);
             this.mView = view;
-            this.vRoundLetterView = (RoundLetterView) view.findViewById(R.id.vRoundLetterView);
-            this.tvContactName = (TextView) view.findViewById(R.id.tvContactName);
-            this.tvNumber = (TextView) view.findViewById(R.id.tvNumber);
-            this.ivSelectedState = (ImageView) view.findViewById(R.id.ivSelectedState);
+            this.vRoundLetterView = view.findViewById(R.id.vRoundLetterView);
+            this.tvContactName = view.findViewById(R.id.tvContactName);
+            this.tvNumber = view.findViewById(R.id.tvNumber);
+            this.ivSelectedState = view.findViewById(R.id.ivSelectedState);
         }
     }
 
@@ -214,7 +213,7 @@ class MultiContactPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                List<Contact> filteredResults = null;
+                List<Contact> filteredResults;
                 if (constraint.length() == 0) {
                     filteredResults = contactItemListOriginal;
                     currentFilterQuery = null;

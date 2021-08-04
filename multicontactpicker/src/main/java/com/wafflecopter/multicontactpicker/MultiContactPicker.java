@@ -176,7 +176,6 @@ public class MultiContactPicker {
         return contactResults;
     }
 
-    @SuppressWarnings("unchecked")
     public static ArrayList<ContactResult> obtainResult(Intent data) {
         return data.getParcelableArrayListExtra(VipFitterMultiContactPickerActivity.EXTRA_RESULT_SELECTION);
     }

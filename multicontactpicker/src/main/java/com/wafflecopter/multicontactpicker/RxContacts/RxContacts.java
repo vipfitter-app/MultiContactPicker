@@ -78,12 +78,7 @@ public class RxContacts {
     private Context mContext;
 
     public static Observable<Contact> fetch(@NonNull final LimitColumn columnLimitChoice, @NonNull final Context context) {
-        return Observable.create(new ObservableOnSubscribe<Contact>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<Contact> e) throws Exception {
-                new RxContacts(context).fetch(columnLimitChoice, e);
-            }
-        });
+        return Observable.create(e -> new RxContacts(context).fetch(columnLimitChoice, e));
     }
 
     private RxContacts(@NonNull Context context) {
@@ -214,9 +209,8 @@ public class RxContacts {
     }
 
     private String getFilter(LimitColumn limitColumn) {
-        switch (limitColumn) {
-            case PHONE:
-                return ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0";
+        if (limitColumn == LimitColumn.PHONE) {
+            return ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0";
         }
         return null;
     }

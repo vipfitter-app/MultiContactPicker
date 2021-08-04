@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.res.ResourcesCompat;
@@ -67,25 +68,22 @@ public class VipFitterMultiContactPickerActivity extends AppCompatActivity imple
 
         ImageView mImgClose = findViewById(R.id.img_close);
         mImgClose.setVisibility(View.VISIBLE);
-        mImgClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                View view = getCurrentFocus();
+        mImgClose.setOnClickListener(v -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            View view = getCurrentFocus();
 
-                if (view == null) {
-                    view = new View(VipFitterMultiContactPickerActivity.this);
-                }
-
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-
-                Intent result = new Intent();
-                result.putExtra(EXTRA_RESULT_SELECTION, MultiContactPicker.buildResult(new ArrayList<Contact>()));
-                setResult(RESULT_OK, result);
-                finish();
+            if (view == null) {
+                view = new View(VipFitterMultiContactPickerActivity.this);
             }
+
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
+            Intent result = new Intent();
+            result.putExtra(EXTRA_RESULT_SELECTION, MultiContactPicker.buildResult(new ArrayList<>()));
+            setResult(RESULT_OK, result);
+            finish();
         });
 
         searchView = findViewById(R.id.searchview);
@@ -94,12 +92,7 @@ public class VipFitterMultiContactPickerActivity extends AppCompatActivity imple
         tvNoContacts = findViewById(R.id.tvNoContacts);
         tvTitle = findViewById(R.id.tv_det_title);
         tvBtnDone = findViewById(R.id.tv_done);
-        tvBtnDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finishPicking();
-            }
-        });
+        tvBtnDone.setOnClickListener(v -> finishPicking());
 
         initialiseUI(builder);
 
@@ -107,13 +100,10 @@ public class VipFitterMultiContactPickerActivity extends AppCompatActivity imple
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
-        adapter = new VipFitterMultiContactPickerAdapter(this, mListItems, new VipFitterMultiContactPickerAdapter.ContactSelectListener() {
-            @Override
-            public void onContactSelected(Contact contact, int totalSelectedContacts) {
-                updateSelectBarContents(totalSelectedContacts);
-                if (builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE) {
-                    finishPicking();
-                }
+        adapter = new VipFitterMultiContactPickerAdapter(this, mListItems, (contact, totalSelectedContacts) -> {
+            updateSelectBarContents(totalSelectedContacts);
+            if (builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE) {
+                finishPicking();
             }
         });
 
@@ -143,36 +133,21 @@ public class VipFitterMultiContactPickerActivity extends AppCompatActivity imple
         RxContacts.fetch(builder.columnLimit, this)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        disposables.add(disposable);
-                    }
-                })
-                .filter(new Predicate<Contact>() {
-                    @Override
-                    public boolean test(Contact contact) throws Exception {
-                        return contact.getDisplayName() != null;
-                    }
-                })
+                .doOnSubscribe(disposable -> disposables.add(disposable))
+                .filter(contact -> contact.getDisplayName() != null)
                 .subscribe(new Observer<Contact>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(Contact value) {
+                    public void onNext(@NonNull Contact value) {
                         contactList.add(value);
                         if (builder.selectedItems.contains(value.getId())) {
                             adapter.setContactSelected(value.getId());
                         }
-                        Collections.sort(contactList, new Comparator<Contact>() {
-                            @Override
-                            public int compare(Contact contact, Contact t1) {
-                                return contact.getDisplayName().compareToIgnoreCase(t1.getDisplayName());
-                            }
-                        });
+                        Collections.sort(contactList, (contact, t1) -> contact.getDisplayName().compareToIgnoreCase(t1.getDisplayName()));
                         if (builder.loadingMode == MultiContactPicker.LOAD_ASYNC) {
                             if (adapter != null) {
                                 adapter.notifyDataSetChanged();
@@ -182,7 +157,7 @@ public class VipFitterMultiContactPickerActivity extends AppCompatActivity imple
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NonNull Throwable e) {
                         progressBar.setVisibility(View.GONE);
                         e.printStackTrace();
                     }
@@ -327,13 +302,10 @@ public class VipFitterMultiContactPickerActivity extends AppCompatActivity imple
             }
         }
 
-        adapter = new VipFitterMultiContactPickerAdapter(this, mListItems, new VipFitterMultiContactPickerAdapter.ContactSelectListener() {
-            @Override
-            public void onContactSelected(Contact contact, int totalSelectedContacts) {
-                updateSelectBarContents(totalSelectedContacts);
-                if (builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE) {
-                    finishPicking();
-                }
+        adapter = new VipFitterMultiContactPickerAdapter(this, mListItems, (contact, totalSelectedContacts) -> {
+            updateSelectBarContents(totalSelectedContacts);
+            if (builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE) {
+                finishPicking();
             }
         });
 

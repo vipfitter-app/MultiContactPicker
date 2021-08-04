@@ -15,6 +15,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -55,8 +56,9 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
         this.context = context;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         if (viewType == VIEW_TYPE_HEADER) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cell_contact_header, viewGroup, false);
             return new VipFitterMultiContactPickerAdapter.VHHeader(view);
@@ -67,7 +69,7 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int i) {
 
         final Contact contactItem = getItem(i);
         if (contactItem != null) {
@@ -132,15 +134,12 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
                         contactViewHolder.ivSelectedState.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.check_off));
                     }
 
-                    contactViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            setContactSelected(contactItem.getId());
-                            if (listener != null) {
-                                listener.onContactSelected(getItem(i), getSelectedContactsCount());
-                            }
-                            notifyDataSetChanged();
+                    contactViewHolder.mView.setOnClickListener(view -> {
+                        setContactSelected(contactItem.getId());
+                        if (listener != null) {
+                            listener.onContactSelected(getItem(i), getSelectedContactsCount());
                         }
+                        notifyDataSetChanged();
                     });
             }
         }
@@ -260,7 +259,7 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                List<Contact> filteredResults = null;
+                List<Contact> filteredResults;
                 if (constraint.length() == 0) {
                     filteredResults = contactItemListOriginal;
                     currentFilterQuery = null;
