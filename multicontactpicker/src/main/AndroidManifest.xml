@@ -4,5 +4,12 @@
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
-    <application android:allowBackup="true" />
+    <application android:allowBackup="true">
+        <activity
+            android:name=".MultiContactPickerActivity"
+            android:label="@string/picker_title" />
+
+        <activity android:name=".VipFitterMultiContactPickerActivity" />
+
+    </application>
 </manifest>
