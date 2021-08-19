@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.l4digital.fastscroll.FastScroller;
 import com.wafflecopter.multicontactpicker.RxContacts.Contact;
+import com.wafflecopter.multicontactpicker.RxContacts.RxContacts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,6 +214,8 @@ public class VipFitterMultiContactPickerAdapter extends RecyclerView.Adapter<Rec
         List<Contact> selectedContacts = new ArrayList<>();
         for (Contact contact : contactItemListOriginal) {
             if (contact.isSelected()) {
+                RxContacts.getName(contact.getId(), contact, context);
+                RxContacts.getEmail(contact.getId(), contact, context);
                 selectedContacts.add(contact);
             }
         }

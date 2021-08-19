@@ -30,7 +30,6 @@ import com.wafflecopter.multicontactpicker.LimitColumn;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 
 
 public class RxContacts {
@@ -45,13 +44,16 @@ public class RxContacts {
     private static final Uri EMAIL_CONTENT_URI = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
     private static final Uri NAME_CONTENT_URI = ContactsContract.Data.CONTENT_URI;
 
+    private static final Uri[] CONTENT_URI  = {
+            ContactsContract.Contacts.CONTENT_URI,
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+            ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+            ContactsContract.Data.CONTENT_URI
+    };
+
     private static final String[] PROJECTION = {
             ContactsContract.Contacts._ID,
-            ContactsContract.Contacts.IN_VISIBLE_GROUP,
             DISPLAY_NAME,
-            ContactsContract.Contacts.STARRED,
-            ContactsContract.Contacts.PHOTO_URI,
-            ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
             ContactsContract.Contacts.HAS_PHONE_NUMBER
     };
 
@@ -90,14 +92,11 @@ public class RxContacts {
         LongSparseArray<Contact> contacts = new LongSparseArray<>();
         Cursor cursor = createCursor(getFilter(columnLimitChoice));
         cursor.moveToFirst();
-        int idColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
-        int inVisibleGroupColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts.IN_VISIBLE_GROUP);
-        int displayNamePrimaryColumnIndex = cursor.getColumnIndex(DISPLAY_NAME);
-        int starredColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts.STARRED);
-        int photoColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_URI);
-        int thumbnailColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI);
-        int hasPhoneNumberColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER);
 
+        int idColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
+        int hasPhoneNumberColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER);
+        int displayNamePrimaryColumnIndex = cursor.getColumnIndex(DISPLAY_NAME);
+        int emailIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
 
         while (!cursor.isAfterLast()) {
             long id = cursor.getLong(idColumnIndex);
@@ -105,23 +104,15 @@ public class RxContacts {
             if (contact == null) {
                 contact = new Contact(id, 1);
             }
-            ColumnMapper.mapInVisibleGroup(cursor, contact, inVisibleGroupColumnIndex);
-            ColumnMapper.mapDisplayName(cursor, contact, displayNamePrimaryColumnIndex);
-            ColumnMapper.mapStarred(cursor, contact, starredColumnIndex);
-            ColumnMapper.mapPhoto(cursor, contact, photoColumnIndex);
-            ColumnMapper.mapThumbnail(cursor, contact, thumbnailColumnIndex);
 
-            getName(id, contact);
+            ColumnMapper.mapDisplayName(cursor, contact, displayNamePrimaryColumnIndex);
 
             switch (columnLimitChoice) {
                 case EMAIL:
-                    getEmail(id, contact);
+                    getEmail(id, contact, mContext);
                     break;
                 case PHONE:
-                    getPhoneNumber(id, cursor, contact, hasPhoneNumberColumnIndex);
-                    break;
                 case NONE:
-                    getEmail(id, contact);
                     getPhoneNumber(id, cursor, contact, hasPhoneNumberColumnIndex);
                     break;
             }
@@ -143,8 +134,8 @@ public class RxContacts {
         emitter.onComplete();
     }
 
-    private void getEmail(long id, Contact contact) {
-        Cursor emailCursor = mResolver.query(EMAIL_CONTENT_URI, EMAIL_PROJECTION,
+    public static void getEmail(long id, Contact contact, Context context) {
+        Cursor emailCursor = context.getContentResolver().query(EMAIL_CONTENT_URI, EMAIL_PROJECTION,
                 ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{String.valueOf(id)}, null);
 
         if (emailCursor != null) {
@@ -156,10 +147,10 @@ public class RxContacts {
         }
     }
 
-    private void getName(long id, Contact contact) {
+    public static void getName(long id, Contact contact, Context context) {
 
         String[] whereNameParams = new String[] {String.valueOf(id), ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE };
-        Cursor nameCursor = mResolver.query(NAME_CONTENT_URI, STRUCTURED_NAME_PROJECTION,
+        Cursor nameCursor = context.getContentResolver().query(NAME_CONTENT_URI, STRUCTURED_NAME_PROJECTION,
                 ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?", whereNameParams, null);
 
         if (nameCursor != null) {
